@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+
+
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+
+        <!-- Include the jQuery library -->
+        <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+
+        <!-- Include the jQuery Mobile library -->
+        <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <link rel="stylesheet" type="text/css" href="css/index.css">
+
+        <script type="text/javascript">
+
+            var cvaReady = false;
+            var li;
+            var alertTitle="Geolocatoin";
+            var alertBtn="Continue";
+
+            function onBodyLoad(){
+                alert("onBodyLoad");
+
+                document.addEventListener("deviceready", onDeviceReady(), false);
+            }
+
+            function onDeviceReady(){
+                navigator.notification.alert("Cordova is ready", null, "Device Ready", "Continue");
+                cvaReady=true;
+                li=document.getElementById('locationInfo');
+            }
+
+            function getLocation(){
+                if(cvaReady == true)
+                {
+                    //li.innerHTML = 'Starting Watch';
+                    var locOption = {
+                        timeout: 5000,
+                        enableHighAccuracy: true
+                    };
+
+                    navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locOption);
+
+
+                }
+                else{
+                    alert("Please wait, Cordova is not ready.");
+                }
+            }
+
+                function makeListItem(theLabel, theValue){
+                    return '<li>' + theLabel + ': ' + theValue +'</li>';
+
+                }
+
+            function locationSuccess(loc){
+            alert("location success");
+
+
+                var d= new Date(loc.timestamp);
+
+
+                li.innerHTML='<ul><h3>Location Reading</h3>';
+                li.innerHTML+= makeListItem('Latitude', loc.coords.latitude);
+                li.innerHTML+=makeListItem('Longitude', loc.coords.longitude);
+                li.innerHTML+=makeListItem('Altitude', loc.coords.altitude);
+                li.innerHTML+=makeListItem('Accuracy', loc.coords.accuracy);
+                li.innerHTML+=makeListItem('Altitude Accuracy', loc.coords.altitudeAccuracy);
+                li.innerHTML+=makeListItem('Heading', loc.coords.heading);
+                li.innerHTML+=makeListItem('Speed', loc.coords.speed);
+                li.innerHTML+=makeListItem('Timestamp', d.toLocalString());
+
+                li.innerHTML+='</ul>';
+
+            }
+
+            function locationError(errObj){
+                li.innerHTM='Error Reading Location';
+                console.error(JSON.stringify(errObj));
+                navigator.notification.alert("Error: "+errObj.message +
+                    "("+errObj.code + ")", null, alertTitle, alertBtn);
+
+            }
+        </script>
+
+        <title>Geolocation</title>
+    </head>
+    <body onload="onBodyLoad()">
+        <div data-role="header">
+            <h1>Geolocation</h1>
+        </div>
+        <div data-role="content">
+            <p>Cordova Application that demonstrates the Geolocation API;
+            click the Refresh Location button to measure the device's current
+            location</p>
+            <button onclick="getLocation()">Refresh Location</button>
+            <hr/>
+            <p id="locationInfo">Nothing to see here, click the button first</p>
+        </div>
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+    </body>
+</html>
